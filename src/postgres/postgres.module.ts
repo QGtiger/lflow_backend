@@ -12,8 +12,6 @@ import { createClient } from '@vercel/postgres';
         const client = createClient();
         await client.connect();
 
-        console.log(process.env);
-
         console.log('Connected to Postgres database and created users table');
         await client.query(`
           CREATE TABLE IF NOT EXISTS users (
