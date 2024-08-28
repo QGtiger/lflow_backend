@@ -9,7 +9,7 @@ import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
 
 @Module({
-  imports: [PostgresModule, UserModule, RedisModule, EmailModule],
+  imports: [PostgresModule, UserModule],
   controllers: [AppController],
   providers: [
     AppService,
