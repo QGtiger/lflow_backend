@@ -10,6 +10,7 @@ exports.PostgresModule = void 0;
 const common_1 = require("@nestjs/common");
 const postgres_service_1 = require("./postgres.service");
 const pg_1 = require("pg");
+const config_1 = require("@nestjs/config");
 let PostgresModule = class PostgresModule {
 };
 exports.PostgresModule = PostgresModule;
@@ -20,9 +21,9 @@ exports.PostgresModule = PostgresModule = __decorate([
             postgres_service_1.PostgresService,
             {
                 provide: 'POSTGRES_CLIENT',
-                async useFactory() {
+                async useFactory(configService) {
                     const client = new pg_1.Client({
-                        connectionString: 'postgres://default:gZVnd2lINU4o@ep-silent-feather-a4m42jsr-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require',
+                        connectionString: configService.get('POSTGRES_URL'),
                     });
                     await client.connect();
                     console.log('Connected to Postgres database and created users table');
@@ -37,6 +38,7 @@ exports.PostgresModule = PostgresModule = __decorate([
         `);
                     return client;
                 },
+                inject: [config_1.ConfigService],
             },
         ],
         exports: [postgres_service_1.PostgresService],

@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { PostgresService } from './postgres.service';
 import { Client } from 'pg';
+import { ConfigService } from '@nestjs/config';
 
 @Global()
 @Module({
@@ -8,10 +9,9 @@ import { Client } from 'pg';
     PostgresService,
     {
       provide: 'POSTGRES_CLIENT',
-      async useFactory() {
+      async useFactory(configService: ConfigService) {
         const client = new Client({
-          connectionString:
-            'postgres://default:gZVnd2lINU4o@ep-silent-feather-a4m42jsr-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require',
+          connectionString: configService.get('POSTGRES_URL'),
         });
         await client.connect();
 
@@ -28,6 +28,7 @@ import { Client } from 'pg';
 
         return client;
       },
+      inject: [ConfigService],
     },
   ],
   exports: [PostgresService],
