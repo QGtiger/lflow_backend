@@ -10,14 +10,24 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
+const postgres_module_1 = require("./postgres/postgres.module");
+const user_module_1 = require("./user/user.module");
+const core_1 = require("@nestjs/core");
+const common_filter_1 = require("./common/common.filter");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [],
+        imports: [postgres_module_1.PostgresModule, user_module_1.UserModule],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [
+            app_service_1.AppService,
+            {
+                provide: core_1.APP_FILTER,
+                useClass: common_filter_1.CommonFilter,
+            },
+        ],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
