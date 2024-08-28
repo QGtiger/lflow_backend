@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { PostgresService } from './postgres.service';
 import { Client } from 'pg';
-import { ConfigService } from '@nestjs/config';
+import { POSTGRES_URL } from 'src/constants';
 
 @Global()
 @Module({
@@ -9,10 +9,9 @@ import { ConfigService } from '@nestjs/config';
     PostgresService,
     {
       provide: 'POSTGRES_CLIENT',
-      async useFactory(configService: ConfigService) {
-        console.log(configService.get('POSTGRES_URL'));
+      async useFactory() {
         const client = new Client({
-          connectionString: configService.get('POSTGRES_URL'),
+          connectionString: POSTGRES_URL,
         });
         await client.connect();
 
@@ -29,7 +28,6 @@ import { ConfigService } from '@nestjs/config';
 
         return client;
       },
-      inject: [ConfigService],
     },
   ],
   exports: [PostgresService],
