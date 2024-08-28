@@ -6,6 +6,8 @@ import { UserModule } from './user/user.module';
 import { APP_FILTER } from '@nestjs/core';
 import { CommonFilter } from './common/common.filter';
 import { ConfigModule } from '@nestjs/config';
+import { RedisModule } from './redis/redis.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { ConfigModule } from '@nestjs/config';
     }),
     PostgresModule,
     UserModule,
+    RedisModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [

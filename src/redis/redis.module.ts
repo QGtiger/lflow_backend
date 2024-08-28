@@ -17,6 +17,7 @@ import { ConfigService } from '@nestjs/config';
           url: configService.get('REDIS_URL'),
         });
         await client.connect();
+        console.log('Redis connected');
         return client;
       },
       inject: [ConfigService],
