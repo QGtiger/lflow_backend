@@ -13,7 +13,7 @@ import { EmailModule } from './email/email.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: 'src/.env',
     }),
     PostgresModule,
     UserModule,

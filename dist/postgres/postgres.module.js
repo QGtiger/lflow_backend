@@ -22,6 +22,7 @@ exports.PostgresModule = PostgresModule = __decorate([
             {
                 provide: 'POSTGRES_CLIENT',
                 async useFactory(configService) {
+                    console.log(configService.get('POSTGRES_URL'));
                     const client = new pg_1.Client({
                         connectionString: configService.get('POSTGRES_URL'),
                     });

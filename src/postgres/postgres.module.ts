@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
     {
       provide: 'POSTGRES_CLIENT',
       async useFactory(configService: ConfigService) {
+        console.log(configService.get('POSTGRES_URL'));
         const client = new Client({
           connectionString: configService.get('POSTGRES_URL'),
         });

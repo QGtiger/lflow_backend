@@ -25,7 +25,7 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-                envFilePath: '.env',
+                envFilePath: 'src/.env',
             }),
             postgres_module_1.PostgresModule,
             user_module_1.UserModule,

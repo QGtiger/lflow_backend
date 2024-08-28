@@ -22,6 +22,7 @@ exports.RedisModule = RedisModule = __decorate([
             {
                 provide: 'REDIS_CLIENT',
                 async useFactory(configService) {
+                    console.log('redis', configService.get('REDIS_URL'));
                     const client = (0, redis_1.createClient)({
                         socket: {
                             tls: true,
