@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { PostgresService } from './postgres.service';
-import { createClient } from '@vercel/postgres';
+import { createPool } from '@vercel/postgres';
 import { POSTGRES_URL } from 'src/constants';
 
 @Global()
@@ -10,7 +10,7 @@ import { POSTGRES_URL } from 'src/constants';
     {
       provide: 'POSTGRES_CLIENT',
       async useFactory() {
-        const client = createClient({
+        const client = createPool({
           connectionString: POSTGRES_URL,
         });
         await client.connect();
