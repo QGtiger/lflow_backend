@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { PostgresService } from 'src/postgres/postgres.service';
+import { PostgresService } from '../postgres/postgres.service';
 import { User } from './entities/user.entity';
-import { md5 } from 'src/utils';
 
 @Injectable()
 export class UserService {
