@@ -9,7 +9,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
 
-  const appConfig = app.get(ConfigService);
-  await app.listen(appConfig.get('NEST_PORT'));
+  await app.listen(3000);
 }
 bootstrap();
