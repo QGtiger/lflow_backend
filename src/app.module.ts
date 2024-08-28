@@ -5,9 +5,17 @@ import { PostgresModule } from './postgres/postgres.module';
 import { UserModule } from './user/user.module';
 import { APP_FILTER } from '@nestjs/core';
 import { CommonFilter } from './common/common.filter';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PostgresModule, UserModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: 'src/.env',
+    }),
+    PostgresModule,
+    UserModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
