@@ -56,11 +56,11 @@ export class UserService {
     });
 
     if (!foundUser) {
-      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
     }
 
     if (foundUser.password !== md5(loginUserDto.password)) {
-      throw new HttpException('Password is incorrect', HttpStatus.BAD_REQUEST);
+      throw new HttpException('密码错误，请重试', HttpStatus.BAD_REQUEST);
     }
 
     const vo = new LoginUserVo();
@@ -80,11 +80,11 @@ export class UserService {
     );
 
     if (!captcha) {
-      throw new HttpException('Captcha is expired', HttpStatus.BAD_REQUEST);
+      throw new HttpException('验证码已过期，请重试', HttpStatus.BAD_REQUEST);
     }
 
     if (captcha !== registerUserDto.captcha) {
-      throw new HttpException('Captcha is incorrect', HttpStatus.BAD_REQUEST);
+      throw new HttpException('验证码错误', HttpStatus.BAD_REQUEST);
     }
 
     const emailUser = await this.postgresService.findOne('users', {
@@ -96,11 +96,11 @@ export class UserService {
     });
 
     if (emailUser) {
-      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+      throw new HttpException('邮件已注册', HttpStatus.BAD_REQUEST);
     }
 
     if (foundUser) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+      throw new HttpException('用户名已注册', HttpStatus.BAD_REQUEST);
     }
 
     await this.postgresService.create<Partial<User>>('users', {
