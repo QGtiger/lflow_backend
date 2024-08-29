@@ -3,10 +3,10 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { PostgresService } from '../postgres/postgres.service';
 import { User } from './entities/user.entity';
-import { md5 } from 'src/utils';
+import { md5 } from '../utils';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserVo } from './vo/login-user.vo';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class UserService {
