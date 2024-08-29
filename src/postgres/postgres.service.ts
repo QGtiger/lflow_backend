@@ -12,7 +12,7 @@ export class PostgresService {
    * @param values 插入数据
    * @returns
    */
-  async create(table: string, values: any) {
+  async create<T = any>(table: string, values: T) {
     const columns = Object.keys(values).join(', ');
     const placeholders = Object.keys(values)
       .map((_, index) => `$${index + 1}`)

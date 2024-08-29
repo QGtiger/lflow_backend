@@ -1,0 +1,19 @@
+interface JwtUserData {
+  id: number;
+
+  username: string;
+
+  email: string;
+}
+
+declare module 'express' {
+  interface Request {
+    user: JwtUserData;
+    headers: {
+      authorization: `Bearer ${string}`;
+    };
+    ip: string;
+    method: string;
+    path: string;
+  }
+}

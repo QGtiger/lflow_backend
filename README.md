@@ -1,1 +1,4 @@
 - [使用 ValidationPipe 进行参数校验](https://juejin.cn/book/7226988578700525605/section/7237073778033819708)
+- [@vercel/kv](https://github.com/vercel/storage/blob/main/packages/kv/README.md) redis 数据库连接器方式
+- [@vercel/postgress](https://github.com/vercel/storage/blob/main/packages/postgres/README.md)
+- [jwt session](https://juejin.cn/book/7226988578700525605/section/7229127824358637605)
