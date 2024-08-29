@@ -87,9 +87,17 @@ export class UserService {
       throw new HttpException('Captcha is incorrect', HttpStatus.BAD_REQUEST);
     }
 
-    const foundUser = await this.postgresService.findOne('users', {
+    const emailUser = await this.postgresService.findOne('users', {
       email: registerUserDto.email,
     });
+
+    const foundUser = await this.postgresService.findOne('users', {
+      username: registerUserDto.username,
+    });
+
+    if (emailUser) {
+      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+    }
 
     if (foundUser) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);

@@ -15,5 +15,6 @@ declare module 'express' {
     ip: string;
     method: string;
     path: string;
+    body: any;
   }
 }
