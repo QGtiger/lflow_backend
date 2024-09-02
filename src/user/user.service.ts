@@ -27,6 +27,17 @@ export class UserService {
     };
   }
 
+  /**
+   * 查询用户
+   * @param id 用户 id
+   * @returns 用户
+   */
+  async findUserById(id: number): Promise<User> {
+    return this.postgresService.findOne('users', {
+      id,
+    });
+  }
+
   // 生成 JWT Token
   generateJwtToken(user: User) {
     const payload = this.getJwtPayloadByUser(user);
