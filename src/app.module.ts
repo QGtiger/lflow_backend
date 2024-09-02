@@ -9,6 +9,7 @@ import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
 import { JwtModule } from '@nestjs/jwt';
 import { CommonInterceptor } from './common/common.interceptor';
+import { CloudfunctionsModule } from './cloudfunctions/cloudfunctions.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CommonInterceptor } from './common/common.interceptor';
     UserModule,
     RedisModule,
     EmailModule,
+    CloudfunctionsModule,
   ],
   controllers: [AppController],
   providers: [
