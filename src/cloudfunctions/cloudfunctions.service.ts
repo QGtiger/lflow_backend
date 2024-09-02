@@ -36,8 +36,18 @@ export class CloudfunctionsService {
     return result;
   }
 
-  findAll(userId: number) {
-    return this.postgresService.findAll('cloud_functions', { user_id: userId });
+  async findAll(userId: number) {
+    const result = await this.postgresService.findAll<Cloudfunction[]>(
+      'cloud_functions',
+      { user_id: userId },
+    );
+    return result.map((item) => {
+      return {
+        ...item,
+        created_at: item.created_at?.getTime(),
+        updated_at: item.updated_at?.getTime(),
+      };
+    });
   }
 
   findOne(id: number) {

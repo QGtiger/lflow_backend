@@ -45,7 +45,7 @@ export class PostgresService {
     return rows[0];
   }
 
-  async findAll(table: string, where: any): Promise<any> {
+  async findAll<T = any>(table: string, where: any): Promise<T> {
     const columns = Object.keys(where).join(' AND ');
     const placeholders = Object.keys(where)
       .map((_, index) => `$${index + 1}`)
