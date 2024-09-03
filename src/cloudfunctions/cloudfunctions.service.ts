@@ -50,8 +50,8 @@ export class CloudfunctionsService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cloudfunction`;
+  findOne(uid: string) {
+    return this.postgresService.findOne('cloud_functions', { uid });
   }
 
   update(uid: string, updateCloudfunctionDto: UpdateCloudfunctionDto) {

@@ -33,9 +33,9 @@ export class CloudfunctionsController {
     return this.cloudfunctionsService.findAll(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cloudfunctionsService.findOne(+id);
+  @Get(':uid')
+  findOne(@Param('uid') uid: string) {
+    return this.cloudfunctionsService.findOne(uid);
   }
 
   @Patch(':uid')
