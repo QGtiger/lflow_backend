@@ -70,4 +70,19 @@ export class PostgresService {
       ...Object.values(where),
     ]);
   }
+
+  async findAllByLeftJoin(
+    table: string,
+    joinTable: string,
+    on: string,
+    where: any,
+  ) {
+    const columns = Object.keys(where).join(' AND ');
+    const placeholders = Object.keys(where)
+      .map((_, index) => `$${index + 1}`)
+      .join(' AND ');
+    const query = `SELECT * FROM ${table} LEFT JOIN ${joinTable} ON ${on} WHERE ${columns} = ${placeholders}`;
+    const { rows } = await this.query(query, Object.values(where));
+    return rows;
+  }
 }

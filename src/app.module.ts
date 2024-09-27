@@ -10,6 +10,7 @@ import { EmailModule } from './email/email.module';
 import { JwtModule } from '@nestjs/jwt';
 import { CommonInterceptor } from './common/common.interceptor';
 import { CloudfunctionsModule } from './cloudfunctions/cloudfunctions.module';
+import { IpaasModule } from './ipaas/ipaas.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CloudfunctionsModule } from './cloudfunctions/cloudfunctions.module';
     RedisModule,
     EmailModule,
     CloudfunctionsModule,
+    IpaasModule,
   ],
   controllers: [AppController],
   providers: [

@@ -18,3 +18,5 @@ declare module 'express' {
     body: any;
   }
 }
+
+type ExcludeEntity<T> = Omit<T, 'created_at' | 'updated_at' | 'id'>;
