@@ -33,7 +33,7 @@ export class UserService {
    * @returns 用户
    */
   async findUserById(id: number): Promise<User> {
-    return this.postgresService.findOne('users', {
+    return this.postgresService.findOne<User>('users', {
       id,
     });
   }
@@ -62,7 +62,7 @@ export class UserService {
    * @returns loginUserVo 登录成功后返回的信息
    */
   async login(loginUserDto: LoginUserDto) {
-    const foundUser: User = await this.postgresService.findOne('users', {
+    const foundUser: User = await this.postgresService.findOne<User>('users', {
       username: loginUserDto.username,
     });
 

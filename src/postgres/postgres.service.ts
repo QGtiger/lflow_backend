@@ -27,30 +27,27 @@ export class PostgresService {
   }
 
   async delete(table: string, where: any) {
-    const columns = Object.keys(where).join(' AND ');
-    const placeholders = Object.keys(where)
-      .map((_, index) => `$${index + 1}`)
-      .join(' AND ');
-    const query = `DELETE FROM ${table} WHERE ${columns} = ${placeholders}`;
+    const wherePlaceholders = Object.keys(where).reduce((acc, key, index) => {
+      return `${acc}${index === 0 ? '' : ' AND '}${key} = $${index + 1}`;
+    }, '');
+    const query = `DELETE FROM ${table} WHERE ${wherePlaceholders}`;
     return this.query(query, Object.values(where));
   }
 
-  async findOne(table: string, where: any): Promise<any> {
-    const columns = Object.keys(where).join(' AND ');
-    const placeholders = Object.keys(where)
-      .map((_, index) => `$${index + 1}`)
-      .join(' AND ');
-    const query = `SELECT * FROM ${table} WHERE ${columns} = ${placeholders}`;
+  async findOne<T>(table: string, where: Partial<T>): Promise<T> {
+    const wherePlaceholders = Object.keys(where).reduce((acc, key, index) => {
+      return `${acc}${index === 0 ? '' : ' AND '}${key} = $${index + 1}`;
+    }, '');
+    const query = `SELECT * FROM ${table} WHERE ${wherePlaceholders}`;
     const { rows } = await this.query(query, Object.values(where));
     return rows[0];
   }
 
   async findAll<T = any>(table: string, where: any): Promise<T> {
-    const columns = Object.keys(where).join(' AND ');
-    const placeholders = Object.keys(where)
-      .map((_, index) => `$${index + 1}`)
-      .join(' AND ');
-    const query = `SELECT * FROM ${table} WHERE ${columns} = ${placeholders}`;
+    const wherePlaceholders = Object.keys(where).reduce((acc, key, index) => {
+      return `${acc}${index === 0 ? '' : ' AND '}${key} = $${index + 1}`;
+    }, '');
+    const query = `SELECT * FROM ${table} WHERE ${wherePlaceholders}`;
     const { rows } = await this.query(query, Object.values(where));
     return rows;
   }
@@ -60,11 +57,13 @@ export class PostgresService {
     const placeholders = Object.keys(values)
       .map((_, index) => `$${index + 1}`)
       .join(', ');
-    const whereColumns = Object.keys(where).join(' AND ');
-    const wherePlaceholders = Object.keys(where)
-      .map((_, index) => `$${index + 1 + Object.keys(values).length}`)
-      .join(' AND ');
-    const query = `UPDATE ${table} SET (${columns}) = (${placeholders}) WHERE ${whereColumns} = ${wherePlaceholders}`;
+
+    const wherePlaceholders = Object.keys(where).reduce((acc, key, index) => {
+      return `${acc}${index === 0 ? '' : ' AND '}${key} = $${
+        index + 1 + Object.keys(values).length
+      }`;
+    }, '');
+    const query = `UPDATE ${table} SET (${columns}) = (${placeholders}) WHERE ${wherePlaceholders}`;
     return this.query(query, [
       ...Object.values(values),
       ...Object.values(where),

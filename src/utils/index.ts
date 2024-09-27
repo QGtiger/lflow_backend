@@ -5,3 +5,12 @@ export function md5(str: string) {
   hash.update(str);
   return hash.digest('hex');
 }
+
+export function simpleParse(str: string, defaultValue: any = {}) {
+  try {
+    if (!str) return defaultValue;
+    return JSON.parse(str);
+  } catch (e) {
+    return defaultValue;
+  }
+}

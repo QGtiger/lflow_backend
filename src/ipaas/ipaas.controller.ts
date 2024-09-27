@@ -33,14 +33,18 @@ export class IpaasController {
     return this.ipaasService.findAll(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ipaasService.findOne(+id);
+  @Get(':code')
+  findOne(@Param('code') code: string, @UserInfo('id') userId: number) {
+    return this.ipaasService.findOne(code, userId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateIpaaDto: UpdateIpaasDto) {
-    return this.ipaasService.update(+id, updateIpaaDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateIpaaDto: UpdateIpaasDto,
+    @UserInfo('id') userId: number,
+  ) {
+    return this.ipaasService.update(+id, updateIpaaDto, userId);
   }
 
   @Delete(':id')
