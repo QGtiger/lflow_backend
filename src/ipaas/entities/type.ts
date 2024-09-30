@@ -92,7 +92,7 @@ type EditotKindConfigMapping = {
     isDynamic: boolean;
 
     dynamicScript: string; // () => IpaasFormSchema[]
-    formatScript: string; // 解析脚本 () => IpaasFormSchema
+    depItems?: string[];
 
     staticSubFields: Array<IpaasFormSchema>;
   };
@@ -104,7 +104,7 @@ type EditorTypeConfig = {
 };
 
 export interface IpaasFormSchema {
-  code: string;
+  code: string | string[];
   name: string;
   type: FieldType;
   description?: string;
@@ -147,6 +147,7 @@ export interface ExcuteInfer {
 
 export type IpaasAuthProtocel = {
   type: 'session_auth' | 'app_key' | 'none';
+  doc?: string;
   inputs: Array<IpaasFormSchema>;
   // 授权本身就是对外部云计算服务，进行数据通信处理，获取三方 token
   excuteProtocol: ExcuteInfer;

@@ -33,7 +33,9 @@ export class InvokeRecordInterceptor implements NestInterceptor {
         },
         error: (err) => {
           this.logger.error(
-            `${method} ${path} error: \n ${JSON.stringify(err)} \n`,
+            `${method} ${path} error: \n ${JSON.stringify(err)} \n message: ${
+              err.message
+            } \n`,
           );
         },
       }),

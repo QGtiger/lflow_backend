@@ -93,14 +93,34 @@ export class IpaasService {
         },
       );
 
-    const { ispublished, id: versionId } = connectorVersion;
+    const { ispublished, id: versionId, connectorid } = connectorVersion;
     if (ispublished) {
       // throw new Error('Cannot update published connector');
+      // 如果修改已发布版本，就先拷贝一份已发布快照版本，版本+1
+      connectorVersion.ispublished = false;
+      connectorVersion.version += 1;
+      connectorVersion.created_at = new Date();
+      connectorVersion.updated_at = new Date();
+      await this.postgresService.create(
+        'ipaas_connector_version',
+        connectorVersion,
+      );
+      await this.postgresService.update(
+        'ipaas_connector',
+        { id: connectorid },
+        {
+          version: connectorVersion.version,
+        },
+      );
     } else {
+      // TODO 这里有点奇怪，authprotocel 传过来是 object 但是存储的不是 [Object object] 哎
       await this.postgresService.update(
         'ipaas_connector_version',
         { id: versionId },
-        updateIpaaDto,
+        {
+          ...updateIpaaDto,
+          updated_at: new Date(),
+        },
       );
     }
     return `This action updates a #${id} ipaas`;
