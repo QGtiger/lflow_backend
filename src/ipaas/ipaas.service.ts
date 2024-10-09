@@ -93,7 +93,12 @@ export class IpaasService {
         },
       );
 
-    const { ispublished, id: versionId, connectorid } = connectorVersion;
+    const {
+      ispublished,
+      id: versionId,
+      connectorid,
+      actions,
+    } = connectorVersion;
     if (ispublished) {
       // throw new Error('Cannot update published connector');
       // 如果修改已发布版本，就先拷贝一份已发布快照版本，版本+1
@@ -120,6 +125,9 @@ export class IpaasService {
         {
           ...updateIpaaDto,
           updated_at: new Date(),
+          actions: updateIpaaDto.actions
+            ? JSON.stringify(updateIpaaDto.actions)
+            : actions,
         },
       );
     }

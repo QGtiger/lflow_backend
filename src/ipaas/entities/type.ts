@@ -22,7 +22,8 @@ type EditorKindMapping = {
     | 'PlainText'
     | 'InputWithCopy'
     | 'Select'
-    | 'Textarea';
+    | 'Textarea'
+    | 'CodeEditor';
   number: 'InputNumber' | 'Select';
   boolean: 'Switch' | 'Select';
   datetime: 'DateTimePicker' | 'DatePicker' | 'TimePicker';
@@ -32,6 +33,7 @@ type EditorKindMapping = {
 };
 
 type EditotKindConfigMapping = {
+  CodeEditor: any;
   Input: {
     placeholder?: string;
     defaultValue?: any;
@@ -120,10 +122,11 @@ export interface IpaasFormSchema {
 
 // http 请求 method
 enum HttpMethodEnum {
-  Post = 'Post',
-  Get = 'Get',
-  Delete = 'Delete',
-  Put = 'Put',
+  POST = 'POST',
+  GET = 'GET',
+  DELETE = 'DELETE',
+  PUT = 'PUT',
+  PATCH = 'PATCH',
 }
 
 // 执行接口
