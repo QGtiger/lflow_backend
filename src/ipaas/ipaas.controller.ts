@@ -51,4 +51,18 @@ export class IpaasController {
   remove(@Param('id') id: string) {
     return this.ipaasService.remove(+id);
   }
+
+  @Post(':id/publish')
+  publish(
+    @Body() pubData: { note: string },
+    @Param('id') id: string,
+    @UserInfo('id') userId: number,
+  ) {
+    return this.ipaasService.publish(pubData, +id, userId);
+  }
+
+  @Get(':id/publish')
+  getPublish(@Param('id') id: string, @UserInfo('id') userId: number) {
+    return this.ipaasService.queryPublishList(+id, userId);
+  }
 }

@@ -63,7 +63,11 @@ export class PostgresService {
         index + 1 + Object.keys(values).length
       }`;
     }, '');
-    const query = `UPDATE ${table} SET (${columns}) = (${placeholders}) WHERE ${wherePlaceholders}`;
+
+    const isMultiUpdateColumns = Object.keys(values).length > 1;
+    const query = isMultiUpdateColumns
+      ? `UPDATE ${table} SET (${columns}) = (${placeholders}) WHERE ${wherePlaceholders}`
+      : `UPDATE ${table} SET ${columns} = ${placeholders} WHERE ${wherePlaceholders}`;
     return this.query(query, [
       ...Object.values(values),
       ...Object.values(where),

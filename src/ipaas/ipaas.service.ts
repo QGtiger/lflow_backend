@@ -62,7 +62,7 @@ export class IpaasService {
     );
     const data = res.rows[0];
     if (!data) {
-      throw new Error('Not found');
+      throw new Error('未查询到连接器版本');
     }
     return {
       ...data,
@@ -74,24 +74,7 @@ export class IpaasService {
   }
 
   async update(id: number, updateIpaaDto: UpdateIpaasDto, userId: number) {
-    const connector = await this.postgresService.findOne<IpaasConnector>(
-      'ipaas_connector',
-      {
-        id,
-        user_id: userId,
-      },
-    );
-    if (!connector) {
-      throw new Error('连接器未查询');
-    }
-    const connectorVersion =
-      await this.postgresService.findOne<IpaasConnectorVersion>(
-        'ipaas_connector_version',
-        {
-          connectorid: id,
-          version: connector.version,
-        },
-      );
+    const connectorVersion = await this.queryConnectorVersion(id, userId);
 
     const {
       ispublished,
@@ -100,21 +83,28 @@ export class IpaasService {
       actions,
     } = connectorVersion;
     if (ispublished) {
-      // throw new Error('Cannot update published connector');
       // 如果修改已发布版本，就先拷贝一份已发布快照版本，版本+1
-      connectorVersion.ispublished = false;
-      connectorVersion.version += 1;
-      connectorVersion.created_at = new Date();
-      connectorVersion.updated_at = new Date();
+      const newConnectorVersion = {
+        ...connectorVersion,
+        ispublished: false,
+        version: connectorVersion.version + 1,
+        created_at: new Date(),
+        updated_at: new Date(),
+        ...updateIpaaDto,
+        actions: updateIpaaDto.actions
+          ? JSON.stringify(updateIpaaDto.actions)
+          : actions,
+      };
+      delete newConnectorVersion.id;
       await this.postgresService.create(
         'ipaas_connector_version',
-        connectorVersion,
+        newConnectorVersion,
       );
       await this.postgresService.update(
         'ipaas_connector',
         { id: connectorid },
         {
-          version: connectorVersion.version,
+          version: newConnectorVersion.version,
         },
       );
     } else {
@@ -136,5 +126,67 @@ export class IpaasService {
 
   remove(id: number) {
     return this.postgresService.delete('ipaas_connector', { id });
+  }
+
+  async queryConnectorVersion(connectorId: number, userId: number) {
+    const connector = await this.postgresService.findOne<IpaasConnector>(
+      'ipaas_connector',
+      {
+        id: connectorId,
+        user_id: userId,
+      },
+    );
+    if (!connector) {
+      throw new Error('未查询到该连接器');
+    }
+    const connectorVersion =
+      await this.postgresService.findOne<IpaasConnectorVersion>(
+        'ipaas_connector_version',
+        {
+          connectorid: connectorId,
+          version: connector.version,
+        },
+      );
+    if (!connectorVersion) {
+      throw new Error('未查询到该连接器版本');
+    }
+
+    return connectorVersion;
+  }
+
+  async publish(pubData: { note: string }, id: number, userId: number) {
+    const connectorVersion = await this.queryConnectorVersion(id, userId);
+
+    if (connectorVersion.ispublished) {
+      throw new Error('不能发布已发布的连接器');
+    }
+    connectorVersion.ispublished = true;
+    connectorVersion.pub_note = pubData.note;
+    await this.postgresService.update(
+      'ipaas_connector_version',
+      { id: connectorVersion.id },
+      {
+        ispublished: true,
+        pub_note: pubData.note,
+      },
+    );
+    return '发布成功';
+  }
+
+  async queryPublishList(connectorId: number, userId: number) {
+    const res = await this.postgresService.query(
+      `select 
+        icv.version, icv.pub_note, icv.updated_at as pub_time
+        from users u 
+        join ipaas_connector ic on u.id = ic.user_id join ipaas_connector_version icv 
+        on ic.id = icv.connectorid 
+        where u.id = ${userId} and ic.id = ${connectorId} and icv.ispublished = true`,
+    );
+    return res.rows.map((it) => {
+      return {
+        ...it,
+        pub_time: it.pub_time.getTime(),
+      };
+    });
   }
 }

@@ -8,6 +8,8 @@ export class IpaasConnectorVersion {
   version: number; // 当前连接器版本
   ispublished: boolean;
 
+  pub_note?: string; // 发布说明
+
   authprotocel: string; // 认证协议 JSON.stringify(IpaasAuthProtocel)
   actions: string; // 动作列表 JSON.stringify(IpaasAction[])
 
