@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/users.entity';
 import { IpaasAction, IpaasAuthProtocel } from './entities/type';
+import { PublishIpaasConnectorDto } from './dto/publish-ipaas.dto';
 
 @Injectable()
 export class IpaasService {
@@ -200,13 +201,13 @@ export class IpaasService {
       .getRawOne();
   }
 
-  async publish(pubData: { note: string }, id: number, userId: number) {
+  async publish(pubData: PublishIpaasConnectorDto, id: number, userId: number) {
     const connectorVersion = await this.queryConnectorVersion(id, userId);
     if (connectorVersion.isPublished) {
       throw new Error('不能发布已发布的连接器');
     }
     connectorVersion.isPublished = true;
-    connectorVersion.pubNote = pubData.note;
+    connectorVersion.pubNote = pubData.pubNote;
     await this.ipaasConnectorVersionRepository.save(connectorVersion);
     return '发布成功';
   }

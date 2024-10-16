@@ -13,6 +13,7 @@ import { CreateIpaasConnectorDto } from './dto/create-ipaasconnector.dto';
 import { UpdateIpaasDto } from './dto/update-ipaas.dto';
 import { RequireLogin, UserInfo } from 'src/common/custom.decorator';
 import { LoginGuard } from 'src/common/login.guard';
+import { PublishIpaasConnectorDto } from './dto/publish-ipaas.dto';
 
 @RequireLogin()
 @UseGuards(LoginGuard)
@@ -54,7 +55,7 @@ export class IpaasController {
 
   @Post(':id/publish')
   publish(
-    @Body() pubData: { note: string },
+    @Body() pubData: PublishIpaasConnectorDto,
     @Param('id') id: string,
     @UserInfo('id') userId: number,
   ) {
