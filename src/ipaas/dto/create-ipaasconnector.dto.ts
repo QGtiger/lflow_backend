@@ -21,14 +21,5 @@ export class CreateIpaasConnectorDto {
   })
   description: string;
 
-  // @IsOptional()
-  // @IsUrl(
-  //   {
-  //     protocols: ['http', 'https'],
-  //   },
-  //   {
-  //     message: 'documentLink必须是一个URL',
-  //   },
-  // )
-  documentlink?: string;
+  documentLink?: string;
 }

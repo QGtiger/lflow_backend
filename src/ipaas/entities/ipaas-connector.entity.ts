@@ -1,20 +1,42 @@
+import { User } from 'src/user/entities/users.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { IpaasConnectorVersion } from './ipaas-connector-version.entity';
+
+@Entity({
+  name: 'ipaas_connector',
+})
 export class IpaasConnector {
+  @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({
+    length: 255,
+    unique: true,
+    comment: '连接器代码',
+  })
   code: string; // 连接器代码
-  version: number; // 连接器版本
 
-  created_at: Date;
-  updated_at: Date;
+  @CreateDateColumn()
+  createTime: Date;
 
-  user_id: number;
+  @UpdateDateColumn()
+  updateTime: Date;
+
+  @ManyToOne(() => User, (user) => user.id, {
+    cascade: true,
+  })
+  userId: number;
+
+  @Column({
+    comment: '连接器版本',
+  })
+  connectorVersion: number;
 }
-
-const sql = `
-  CREATE TABLE IF NOT EXISTS ipaas_connector (
-    id SERIAL PRIMARY KEY,
-    code VARCHAR(255) UNIQUE NOT NULL,
-    version INTEGER NOT NULL,
-    createdAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updatedAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-  );
-`;

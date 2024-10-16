@@ -1,36 +1,89 @@
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { IpaasConnector } from './ipaas-connector.entity';
+
+@Entity({
+  name: 'ipaas_connector_version',
+})
 export class IpaasConnectorVersion {
+  @PrimaryGeneratedColumn()
   id: number;
-  connectorid: number; // 连接器ID 外键
+
+  @Column({
+    length: 255,
+    comment: '连接器名称',
+  })
   name: string;
+
+  @Column({
+    length: 255,
+    comment: '连接器描述',
+  })
   description: string;
-  documentlink?: string; // 连接器帮组文档链接
+
+  @Column({
+    length: 255,
+    comment: '连接器帮助文档链接',
+    nullable: true,
+  })
+  documentLink?: string; // 连接器帮组文档链接
+
+  @Column({
+    length: 255,
+    comment: '连接器logo',
+  })
   logo: string; // 连接器logo
+
+  @Column({
+    comment: '当前连接器版本',
+  })
   version: number; // 当前连接器版本
-  ispublished: boolean;
 
-  pub_note?: string; // 发布说明
+  @Column({
+    comment: '是否发布',
+    default: false,
+  })
+  isPublished: boolean;
 
-  authprotocel: string; // 认证协议 JSON.stringify(IpaasAuthProtocel)
-  actions: string; // 动作列表 JSON.stringify(IpaasAction[])
+  @Column({
+    length: 255,
+    comment: '发布说明',
+    nullable: true,
+  })
+  pubNote?: string; // 发布说明
 
-  created_at: Date;
-  updated_at: Date;
+  @Column({
+    type: 'text',
+    comment: '认证协议',
+    nullable: true,
+  })
+  authProtocol?: string; // 认证协议 JSON.stringify(IpaasAuthProtocel)
+
+  @Column({
+    type: 'text',
+    comment: '动作列表',
+    nullable: true,
+  })
+  actions?: string; // 动作列表 JSON.stringify(IpaasAction[])
+
+  @CreateDateColumn()
+  createTime: Date;
+
+  @UpdateDateColumn()
+  updateTime: Date;
+
+  @JoinColumn({
+    name: 'connectorId',
+  })
+  @ManyToOne(() => IpaasConnector, (connector) => connector.id, {
+    cascade: true,
+  })
+  connector: IpaasConnector;
 }
-
-const sql = `
-  CREATE TABLE IF NOT EXISTS ipaas_connector_version (
-    id SERIAL PRIMARY KEY,
-    connectorId INTEGER NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    description VARCHAR(255),
-    documentLink VARCHAR(255),
-    logo VARCHAR(255),
-    version INTEGER NOT NULL,
-    isPublished BOOLEAN DEFAULT FALSE,
-    authProtocel TEXT,
-    actions TEXT,
-
-    createdAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updatedAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-  );
-`;

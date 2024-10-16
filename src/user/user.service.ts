@@ -1,23 +1,24 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { PostgresService } from '../postgres/postgres.service';
-import { User } from './entities/user.entity';
 import { md5 } from '../utils';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserVo } from './vo/login-user.vo';
 import { RedisService } from '../redis/redis.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/users.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
-  @Inject(PostgresService)
-  private postgresService: PostgresService;
-
   @Inject(JwtService)
   private jwtService: JwtService;
 
   @Inject(RedisService)
   private redisService: RedisService;
+
+  @InjectRepository(User)
+  private userRepository: Repository<User>;
 
   getJwtPayloadByUser(user: User): JwtUserData {
     return {
@@ -33,7 +34,7 @@ export class UserService {
    * @returns 用户
    */
   async findUserById(id: number): Promise<User> {
-    return this.postgresService.findOne<User>('users', {
+    return this.userRepository.findOneBy({
       id,
     });
   }
@@ -62,7 +63,7 @@ export class UserService {
    * @returns loginUserVo 登录成功后返回的信息
    */
   async login(loginUserDto: LoginUserDto) {
-    const foundUser: User = await this.postgresService.findOne<User>('users', {
+    const foundUser: User = await this.userRepository.findOneBy({
       username: loginUserDto.username,
     });
 
@@ -98,11 +99,11 @@ export class UserService {
       throw new HttpException('验证码错误', HttpStatus.BAD_REQUEST);
     }
 
-    const emailUser = await this.postgresService.findOne('users', {
+    const emailUser = await this.userRepository.findOneBy({
       email: registerUserDto.email,
     });
 
-    const foundUser = await this.postgresService.findOne('users', {
+    const foundUser = await this.userRepository.findOneBy({
       username: registerUserDto.username,
     });
 
@@ -114,12 +115,13 @@ export class UserService {
       throw new HttpException('用户名已注册', HttpStatus.BAD_REQUEST);
     }
 
-    await this.postgresService.create<Partial<User>>('users', {
-      username: registerUserDto.username,
-      email: registerUserDto.email,
-      // 密码加密
+    const newUser = this.userRepository.create({
+      ...registerUserDto,
       password: md5(registerUserDto.password),
     });
+
+    await this.userRepository.save(newUser);
+
     return await this.login(registerUserDto);
   }
 }

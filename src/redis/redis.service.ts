@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { VercelKV } from '@vercel/kv';
+import { RedisClientType } from 'redis';
 
 @Injectable()
 export class RedisService {
   @Inject('REDIS_CLIENT')
-  private redisClient: VercelKV;
+  private redisClient: RedisClientType;
 
   async get(key: string) {
     return await this.redisClient.get(key);

@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreateCloudfunctionDto } from './dto/create-cloudfunction.dto';
 import { UpdateCloudfunctionDto } from './dto/update-cloudfunction.dto';
 import { Cloudfunction } from './entities/cloudfunction.entity';
-import { PostgresService } from 'src/postgres/postgres.service';
 import { v4 as uuidV4 } from 'uuid';
 
 function convertParentUid<T extends { parent_uid?: string }>(data: T): T {
@@ -14,8 +13,7 @@ function convertParentUid<T extends { parent_uid?: string }>(data: T): T {
 
 @Injectable()
 export class CloudfunctionsService {
-  @Inject(PostgresService)
-  private readonly postgresService: PostgresService;
+  private readonly postgresService: any = {} as any;
 
   async create(createCloudfunctionDto: CreateCloudfunctionDto, userId: number) {
     const { parent_uid, isdir = true } = convertParentUid(
@@ -37,10 +35,9 @@ export class CloudfunctionsService {
   }
 
   async findAll(userId: number) {
-    const result = await this.postgresService.findAll<Cloudfunction[]>(
-      'cloud_functions',
-      { user_id: userId },
-    );
+    const result = await this.postgresService.findAll('cloud_functions', {
+      user_id: userId,
+    });
     return result.map((item) => {
       return {
         ...item,

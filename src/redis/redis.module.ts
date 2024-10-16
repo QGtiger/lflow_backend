@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { RedisService } from './redis.service';
-import { createClient } from '@vercel/kv';
+import { createClient } from 'redis';
 
 @Global()
 @Module({
@@ -10,11 +10,13 @@ import { createClient } from '@vercel/kv';
       provide: 'REDIS_CLIENT',
       async useFactory() {
         const client = createClient({
-          url: process.env.KV_REST_API_URL,
-          token: process.env.KV_REST_API_TOKEN,
-          automaticDeserialization: false,
+          socket: {
+            host: 'localhost',
+            port: 6379,
+          },
+          database: 1,
         });
-        console.log('Redis connected');
+        await client.connect();
         return client;
       },
     },
