@@ -4,6 +4,8 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile
+    environment:
+      - NODE_ENV=production
     depends_on:
       - mysql-container
       - redis-container
