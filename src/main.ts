@@ -18,6 +18,8 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
+  console.log(configService.get('NEST_SERVER_PORT'));
+
   await app.listen(configService.get('NEST_SERVER_PORT'));
 }
 bootstrap();

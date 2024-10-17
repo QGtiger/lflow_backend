@@ -52,7 +52,7 @@ console.log(path.join(__dirname, '.env'));
           password: configService.get('MYSQL_SERVER_PASSWORD'),
           database: configService.get('MYSQL_SERVER_DATABASE'),
           synchronize: true,
-          logging: false,
+          logging: true,
           entities: [
             Role,
             User,
