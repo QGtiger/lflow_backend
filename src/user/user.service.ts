@@ -8,6 +8,7 @@ import { RedisService } from '../redis/redis.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/users.entity';
 import { Repository } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,9 @@ export class UserService {
 
   @InjectRepository(User)
   private userRepository: Repository<User>;
+
+  @Inject(ConfigService)
+  private configService: ConfigService;
 
   getJwtPayloadByUser(user: User): JwtUserData {
     return {
@@ -41,17 +45,18 @@ export class UserService {
 
   // 生成 JWT Token
   generateJwtToken(user: User) {
+    console.log(this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_TIME'));
     const payload = this.getJwtPayloadByUser(user);
     return {
       accessToken: this.jwtService.sign(payload, {
-        expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_TIME,
+        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_TIME'),
       }),
       refreshToken: this.jwtService.sign(
         {
           userId: payload.id,
         },
         {
-          expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES_TIME,
+          expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRES_TIME'),
         },
       ),
     };

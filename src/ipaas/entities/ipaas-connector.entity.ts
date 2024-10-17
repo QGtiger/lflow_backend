@@ -30,6 +30,7 @@ export class IpaasConnector {
 
   @ManyToOne(() => User, (user) => user.id, {
     cascade: true,
+    onDelete: 'CASCADE',
   })
   userId: number;
 

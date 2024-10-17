@@ -48,6 +48,7 @@ export class Cloudfunction {
 
   @ManyToOne(() => User, (user) => user.id, {
     cascade: true,
+    onDelete: 'CASCADE',
   })
   userId: number;
 

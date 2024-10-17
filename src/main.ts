@@ -1,12 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { config } from 'dotenv';
+// import { config } from 'dotenv';
 import { InvokeRecordInterceptor } from './common/invoke-record.interceptor';
+import { ConfigService } from '@nestjs/config';
 
-config({
-  path: `.env.development.local`,
-});
+// config({
+//   path: `.env.development.local`,
+// });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new InvokeRecordInterceptor());
   app.enableCors();
 
-  await app.listen(3000);
+  const configService = app.get(ConfigService);
+
+  await app.listen(configService.get('NEST_SERVER_PORT'));
 }
 bootstrap();

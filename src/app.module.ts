@@ -17,44 +17,58 @@ import { Permission } from './user/entities/permission.entity';
 import { IpaasConnector } from './ipaas/entities/ipaas-connector.entity';
 import { IpaasConnectorVersion } from './ipaas/entities/ipaas-connector-version.entity';
 import { Cloudfunction } from './cloudfunctions/entities/cloudfunction.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as path from 'path';
+
+console.log(path.join(__dirname, '.env'));
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: [path.join(__dirname, '.env')],
+    }),
     JwtModule.registerAsync({
       global: true,
-      useFactory() {
+      useFactory(configService: ConfigService) {
         return {
-          secret: process.env.JWT_SECRET,
+          secret: configService.get('JWT_SECRET'),
         };
       },
+      inject: [ConfigService],
     }),
     UserModule,
     RedisModule,
     EmailModule,
     CloudfunctionsModule,
     IpaasModule,
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '123456',
-      database: 'lflow',
-      synchronize: true,
-      logging: false,
-      entities: [
-        Role,
-        User,
-        Permission,
-        IpaasConnector,
-        IpaasConnectorVersion,
-        Cloudfunction,
-      ],
-      poolSize: 10,
-      connectorPackage: 'mysql2',
-      extra: {
-        authPlugin: 'sha256_password',
+    TypeOrmModule.forRootAsync({
+      useFactory(configService: ConfigService) {
+        return {
+          type: 'mysql',
+          host: configService.get('MYSQL_SERVER_HOST'),
+          port: configService.get('MYSQL_SERVER_PORT'),
+          username: configService.get('MYSQL_SERVER_USER'),
+          password: configService.get('MYSQL_SERVER_PASSWORD'),
+          database: configService.get('MYSQL_SERVER_DATABASE'),
+          synchronize: true,
+          logging: false,
+          entities: [
+            Role,
+            User,
+            Permission,
+            IpaasConnector,
+            IpaasConnectorVersion,
+            Cloudfunction,
+          ],
+          poolSize: 10,
+          connectorPackage: 'mysql2',
+          extra: {
+            authPlugin: 'sha256_password',
+          },
+        };
       },
+      inject: [ConfigService],
     }),
   ],
   controllers: [AppController],
