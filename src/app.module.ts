@@ -23,6 +23,7 @@ import * as path from 'path';
 // 获取环境变量
 const env = process.env.NODE_ENV || 'development'; // 默认为开发环境
 const isDev = env === 'development';
+console.log('当前环境：', env);
 // 根据不同的环境加载不同的 .env 文件
 const envFilePath = path.join(__dirname, isDev ? '.env.local' : `.env`);
 
