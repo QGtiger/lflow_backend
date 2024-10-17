@@ -6,7 +6,8 @@
     "deleteOutDir": true,
     "watchAssets": true,
     "assets": [
-      "**/*.env"
+      "**/*.env",
+      "**/*.env.local"
     ]
   },
   "generateOptions": {

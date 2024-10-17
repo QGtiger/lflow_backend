@@ -20,13 +20,17 @@ import { Cloudfunction } from './cloudfunctions/entities/cloudfunction.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as path from 'path';
 
-console.log(path.join(__dirname, '.env'));
+// 获取环境变量
+const env = process.env.NODE_ENV || 'development'; // 默认为开发环境
+const isDev = env === 'development';
+// 根据不同的环境加载不同的 .env 文件
+const envFilePath = path.join(__dirname, isDev ? '.env.local' : `.env`);
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [path.join(__dirname, '.env')],
+      envFilePath: [envFilePath],
     }),
     JwtModule.registerAsync({
       global: true,
