@@ -22,8 +22,6 @@ export class IpaasService {
   @InjectRepository(IpaasConnectorVersion)
   private readonly ipaasConnectorVersionRepository: Repository<IpaasConnectorVersion>;
 
-  private readonly postgresService: any = {} as any;
-
   async create(createIpaaDto: CreateIpaasConnectorDto, userId: number) {
     const initVersion = 1;
     const connectorCode = `connector-${v4()}`;
@@ -38,7 +36,7 @@ export class IpaasService {
 
     const connectorVersion = new IpaasConnectorVersion();
     connectorVersion.version = initVersion;
-    connectorVersion.connector = savedConnector;
+    connectorVersion.connectorId = savedConnector.id;
     Object.assign(connectorVersion, createIpaaDto);
 
     await this.ipaasConnectorVersionRepository.save(connectorVersion);
@@ -68,12 +66,13 @@ export class IpaasService {
         ...it,
         createTime: it.createTime.getTime(),
         updateTime: it.updateTime.getTime(),
+        isPublished: !!it.isPublished,
       };
     });
   }
 
   async findOne(
-    id: number,
+    code: string,
     userId: number,
   ): Promise<{
     id: number;
@@ -104,7 +103,7 @@ export class IpaasService {
       .addSelect('icv.actions', 'actions')
       .where('ic.userId = :userId', { userId })
       .andWhere('ic.connectorVersion = icv.version')
-      .andWhere('ic.id = :id', { id })
+      .andWhere('ic.code = :code', { code })
       .getRawOne();
 
     if (!data) {
@@ -150,7 +149,7 @@ export class IpaasService {
           id,
         },
       });
-      newConnectorVersion.connector = connector;
+      newConnectorVersion.connectorId = connector.id;
       // 防止走更新
       delete newConnectorVersion.id;
       // 保存新版本
@@ -175,7 +174,12 @@ export class IpaasService {
   }
 
   remove(id: number) {
-    return this.ipaasConnectorRepository.delete(id);
+    return Promise.all([
+      this.ipaasConnectorRepository.delete(id),
+      this.ipaasConnectorVersionRepository.delete({
+        connectorId: id,
+      }),
+    ]);
   }
 
   async queryConnectorVersion(

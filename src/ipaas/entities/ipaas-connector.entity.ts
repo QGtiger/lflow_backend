@@ -4,11 +4,9 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { IpaasConnectorVersion } from './ipaas-connector-version.entity';
 
 @Entity({
   name: 'ipaas_connector',

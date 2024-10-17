@@ -79,11 +79,8 @@ export class IpaasConnectorVersion {
   @UpdateDateColumn()
   updateTime: Date;
 
-  @JoinColumn({
-    name: 'connectorId',
+  @Column({
+    comment: '连接器id',
   })
-  @ManyToOne(() => IpaasConnector, (connector) => connector.id, {
-    cascade: true,
-  })
-  connector: IpaasConnector;
+  connectorId: number;
 }

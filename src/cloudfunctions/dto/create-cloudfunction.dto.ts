@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsBoolean, IsNotEmpty } from 'class-validator';
 
 export class CreateCloudfunctionDto {
   @IsNotEmpty({
@@ -11,7 +11,10 @@ export class CreateCloudfunctionDto {
   })
   description: string;
 
-  parent_uid?: string;
+  parentUid?: string;
 
-  isdir?: boolean;
+  @IsBoolean({
+    message: 'isDir 必须是布尔值',
+  })
+  isDir?: boolean;
 }

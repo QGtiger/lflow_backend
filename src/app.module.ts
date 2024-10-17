@@ -16,6 +16,7 @@ import { User } from './user/entities/users.entity';
 import { Permission } from './user/entities/permission.entity';
 import { IpaasConnector } from './ipaas/entities/ipaas-connector.entity';
 import { IpaasConnectorVersion } from './ipaas/entities/ipaas-connector-version.entity';
+import { Cloudfunction } from './cloudfunctions/entities/cloudfunction.entity';
 
 @Module({
   imports: [
@@ -41,7 +42,14 @@ import { IpaasConnectorVersion } from './ipaas/entities/ipaas-connector-version.
       database: 'lflow',
       synchronize: true,
       logging: false,
-      entities: [Role, User, Permission, IpaasConnector, IpaasConnectorVersion],
+      entities: [
+        Role,
+        User,
+        Permission,
+        IpaasConnector,
+        IpaasConnectorVersion,
+        Cloudfunction,
+      ],
       poolSize: 10,
       connectorPackage: 'mysql2',
       extra: {

@@ -34,9 +34,9 @@ export class IpaasController {
     return this.ipaasService.findAll(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number, @UserInfo('id') userId: number) {
-    return this.ipaasService.findOne(+id, userId);
+  @Get(':code')
+  findOne(@Param('code') code: string, @UserInfo('id') userId: number) {
+    return this.ipaasService.findOne(code, userId);
   }
 
   @Patch(':id')

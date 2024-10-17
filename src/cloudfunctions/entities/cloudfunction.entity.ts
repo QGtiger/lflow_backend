@@ -1,11 +1,59 @@
+import { User } from 'src/user/entities/users.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+@Entity({
+  name: 'cloudfunction',
+})
 export class Cloudfunction {
-  id?: number;
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({
+    length: 255,
+    comment: '函数名称',
+  })
   name: string;
+
+  @Column({
+    length: 100,
+    comment: '函数描述',
+  })
   description: string;
-  parent_uid: string;
-  isdir?: boolean;
-  user_id: number;
-  created_at?: Date;
-  updated_at?: Date;
+
+  @Column({
+    length: 255,
+    comment: '函数 uid',
+  })
   uid: string;
+
+  @Column({
+    length: 255,
+    comment: '父及目录id',
+    default: 'root',
+  })
+  parentUid: string;
+
+  @Column({
+    comment: '是否是目录',
+    default: true,
+  })
+  isDir: boolean;
+
+  @ManyToOne(() => User, (user) => user.id, {
+    cascade: true,
+  })
+  userId: number;
+
+  @CreateDateColumn()
+  createTime: Date;
+
+  @UpdateDateColumn()
+  updateTime: Date;
 }

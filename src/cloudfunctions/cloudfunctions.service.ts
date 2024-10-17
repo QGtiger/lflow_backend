@@ -1,8 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateCloudfunctionDto } from './dto/create-cloudfunction.dto';
 import { UpdateCloudfunctionDto } from './dto/update-cloudfunction.dto';
 import { Cloudfunction } from './entities/cloudfunction.entity';
 import { v4 as uuidV4 } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 function convertParentUid<T extends { parent_uid?: string }>(data: T): T {
   return {
@@ -13,53 +15,64 @@ function convertParentUid<T extends { parent_uid?: string }>(data: T): T {
 
 @Injectable()
 export class CloudfunctionsService {
-  private readonly postgresService: any = {} as any;
+  @InjectRepository(Cloudfunction)
+  private readonly cloudfunctionRepository: Repository<Cloudfunction>;
 
   async create(createCloudfunctionDto: CreateCloudfunctionDto, userId: number) {
-    const { parent_uid, isdir = true } = convertParentUid(
-      createCloudfunctionDto,
-    );
+    const { parentUid } = createCloudfunctionDto;
+    if (parentUid && parentUid !== 'root') {
+      const parentFolder = await this.cloudfunctionRepository.findOneBy({
+        uid: parentUid,
+      });
+      if (!parentFolder) {
+        throw new Error('父级目录不存在');
+      }
+    }
+    const cloudfunction = new Cloudfunction();
+    Object.assign(cloudfunction, createCloudfunctionDto);
+    cloudfunction.uid = uuidV4();
+    cloudfunction.userId = userId;
 
-    const entity: Cloudfunction = {
-      parent_uid,
-      isdir,
-      user_id: userId,
-      name: createCloudfunctionDto.name,
-      description: createCloudfunctionDto.description,
-      uid: uuidV4(),
-    };
-
-    const result = await this.postgresService.create('cloud_functions', entity);
-
-    return result;
+    return this.cloudfunctionRepository.save(cloudfunction);
   }
 
   async findAll(userId: number) {
-    const result = await this.postgresService.findAll('cloud_functions', {
-      user_id: userId,
-    });
-    return result.map((item) => {
+    const list: Cloudfunction[] = await this.cloudfunctionRepository
+      .createQueryBuilder('cf')
+      .select('*')
+      .where('cf.userId = :userId', { userId })
+      .getRawMany();
+
+    return list.map((item) => {
       return {
         ...item,
-        created_at: item.created_at?.getTime(),
-        updated_at: item.updated_at?.getTime(),
+        created_at: item.createTime?.getTime(),
+        updated_at: item.updateTime?.getTime(),
       };
     });
   }
 
   findOne(uid: string) {
-    return this.postgresService.findOne('cloud_functions', { uid });
+    return this.cloudfunctionRepository.findOneBy({ uid });
+  }
+
+  checkIsOwner(uid: string, userId: number) {
+    const item = this.cloudfunctionRepository.findOneBy({ uid, userId });
+    if (!item) {
+      throw new Error('无权限操作');
+    }
   }
 
   update(uid: string, updateCloudfunctionDto: UpdateCloudfunctionDto) {
-    return this.postgresService.update(
-      'cloud_functions',
-      { uid: uid },
-      convertParentUid(updateCloudfunctionDto),
+    return this.cloudfunctionRepository.update(
+      {
+        uid: uid,
+      },
+      updateCloudfunctionDto,
     );
   }
 
   remove(uid: string) {
-    this.postgresService.delete('cloud_functions', { uid });
+    return this.cloudfunctionRepository.delete({ uid });
   }
 }
